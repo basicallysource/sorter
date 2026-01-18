@@ -12,6 +12,8 @@ from robot.states.shared_variables import SharedVariables
 from robot.global_config import GlobalConfig
 
 
+USE_ENCODER = False
+WAIT_TO_CLOSE_BIN_MS = 8000
 DELAY_CHECK_ENCODER_MS = 100
 
 
@@ -78,23 +80,29 @@ class SendingObjectToBin(BaseState):
             main_conveyor.setSpeed(main_speed + EXTRA_SPEED)
             self.logger.info("SENDING_OBJECT_TO_BIN: Main conveyor started")
 
-        conveyor_start_timestamp = time.time()
-        target_distance = self._getDistanceToDistributionModule(
-            bin_coords["distribution_module_idx"]
-        )
-
-        while not self._stop_event.is_set():
-            distance_traveled = self.encoder_manager.getDistanceTraveledSince(
-                conveyor_start_timestamp
+        if USE_ENCODER:
+            conveyor_start_timestamp = time.time()
+            target_distance = self._getDistanceToDistributionModule(
+                bin_coords["distribution_module_idx"]
             )
+
+            while not self._stop_event.is_set():
+                distance_traveled = self.encoder_manager.getDistanceTraveledSince(
+                    conveyor_start_timestamp
+                )
+                self.logger.info(
+                    f"SENDING_OBJECT_TO_BIN: Distance traveled: {distance_traveled} cm, target distance {target_distance}"
+                )
+
+                if distance_traveled >= target_distance:
+                    break
+
+                time.sleep(DELAY_CHECK_ENCODER_MS / 1000)
+        else:
             self.logger.info(
-                f"SENDING_OBJECT_TO_BIN: Distance traveled: {distance_traveled} cm, target distance {target_distance}"
+                f"SENDING_OBJECT_TO_BIN: Waiting {WAIT_TO_CLOSE_BIN_MS}ms (encoder disabled)"
             )
-
-            if distance_traveled >= target_distance:
-                break
-
-            time.sleep(DELAY_CHECK_ENCODER_MS / 1000)
+            time.sleep(WAIT_TO_CLOSE_BIN_MS / 1000)
 
         if self._stop_event.is_set():
             return

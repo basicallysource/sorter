@@ -151,7 +151,7 @@ def buildGlobalConfig() -> GlobalConfig:
         "recording_enabled": args.record,
         "max_queue_size": 8,
         "conveyor_door_open_angle": 70,
-        "bin_door_open_angle": 180 - 60,
+        "bin_door_open_angle": 180 - 70,
         "conveyor_door_closed_angle": 10,
         "bin_door_closed_angle": 170,
         "conveyor_door_close_delay_ms": 2500,
@@ -162,7 +162,7 @@ def buildGlobalConfig() -> GlobalConfig:
         "main_conveyor_speed": -150,
         "feeder_conveyor_speed": -80,
         # "first_vibration_hopper_motor_speed": 172,  # first hopper that pieces enter
-        "first_vibration_hopper_motor_speed": -80,  # first hopper that pieces enter
+        "first_vibration_hopper_motor_speed": -90,  # first hopper that pieces enter
         # "second_vibration_hopper_motor_speed": 165,
         "second_vibration_hopper_motor_speed": -83,
         "first_vibration_hopper_motor_pulse_ms": 200,
